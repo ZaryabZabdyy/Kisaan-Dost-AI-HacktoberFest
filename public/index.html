@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>KisaanDost AI - Smart Agricultural Assistant for Farmers</title>
+  <meta name="description"
+    content="Voice-first, image-assisted agricultural intelligence agent for farmers powered by local Gemma 4.">
+  <meta name="theme-color" content="#1b5e20">
+
+  <link rel="stylesheet" href="styles.css">
+  <!-- Google Fonts for crisp, highly readable typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Noto+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+</head>
+
+<body>
+  <div class="app-container">
+
+    <!-- HEADER BAR -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="logo-icon" aria-hidden="true">🌾</div>
+        <div class="header-titles">
+          <h1>KisaanDost AI</h1>
+          <p class="tagline">Smart Agricultural Assistant for Every Farmer</p>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <!-- Online/Offline AI Status Pill -->
+        <div id="ai-status-pill" class="status-pill status-checking" title="Checking local Gemma 4 AI status...">
+          <span class="status-dot"></span>
+          <span id="ai-status-text">Checking AI...</span>
+        </div>
+
+        <!-- Auto-Readout (TTS) Toggle -->
+        <button id="tts-toggle-btn" class="icon-toggle active"
+          aria-label="Toggle automatic voice readout" title="Auto Voice Readout On/Off">
+          <span class="btn-icon">🔊</span>
+          <span class="btn-label">Voice On</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN CHAT CONTAINER -->
+    <main class="chat-viewport" id="chat-viewport" role="log" aria-live="polite">
+      
+      <!-- Welcome Hero Card with Farmer Imagery -->
+      <div class="message-card bot-message welcome-card">
+        <div class="welcome-image-banner">
+          <img 
+            src="https://images.unsplash.com/photo-1592417817098-8f3d69109853?auto=format&fit=crop&w=720&q=80" 
+            alt="Farmer in agricultural field inspecting crops"
+            class="hero-farmer-photo"
+            loading="lazy"
+            onerror="this.style.display='none'"
+          >
+          <div class="welcome-overlay-badge">👨‍🌾 Farmer Assistant</div>
+        </div>
+
+        <div class="welcome-content-block">
+          <h2 class="welcome-title">Welcome, Farmer Friend!</h2>
+          <p class="welcome-desc">
+            I am <strong>KisaanDost</strong>, your digital farming partner. Ask any question about crop diseases, insect pests, fertilizers, irrigation schedules, or cattle health.
+          </p>
+          <div class="features-badge-row">
+            <span class="badge">🎙️ Speak Question</span>
+            <span class="badge">📷 Send Crop Photo</span>
+            <span class="badge">🔊 Listen to Advice</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamic Message Stream -->
+      <div id="chat-stream" class="chat-stream"></div>
+
+      <!-- Thinking Indicator -->
+      <div id="thinking-indicator" class="thinking-card hidden" aria-hidden="true">
+        <div class="message-avatar">🌾</div>
+        <div class="thinking-bubble">
+          <div class="pulse-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <span class="thinking-text">KisaanDost is analyzing farming advice...</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- AGRICULTURE TOPIC FILTERING & SUGGESTION CHIPS -->
+    <section class="suggestions-rail" aria-label="Agricultural Topic Filtering">
+      
+      <!-- Category Filter Tabs -->
+      <div class="crop-filter-wrapper">
+        <span class="filter-header-label">Crop & Topic Filter:</span>
+        <div class="crop-filter-scroll" id="crop-filters" role="tablist">
+          <button type="button" class="filter-tab active" data-category="all" role="tab" aria-selected="true">
+            🌱 All Topics
+          </button>
+          <button type="button" class="filter-tab" data-category="wheat" role="tab" aria-selected="false">
+            🌾 Wheat
+          </button>
+          <button type="button" class="filter-tab" data-category="cotton" role="tab" aria-selected="false">
+            🌿 Cotton
+          </button>
+          <button type="button" class="filter-tab" data-category="rice" role="tab" aria-selected="false">
+            🍚 Rice
+          </button>
+          <button type="button" class="filter-tab" data-category="vegetables" role="tab" aria-selected="false">
+            🍅 Vegetables
+          </button>
+          <button type="button" class="filter-tab" data-category="fertilizers" role="tab" aria-selected="false">
+            🧪 Fertilizers
+          </button>
+          <button type="button" class="filter-tab" data-category="livestock" role="tab" aria-selected="false">
+            🐄 Cattle & Dairy
+          </button>
+        </div>
+      </div>
+
+      <!-- Filterable Suggestion Chips -->
+      <div class="chip-scroll" id="chips-container">
+        <!-- Wheat -->
+        <button type="button" class="chip" data-category="wheat" data-prompt="My wheat crop has yellow leaves. What disease or fertilizer deficiency is this and how can I treat it?">
+          🌾 Yellow Leaves on Wheat
+        </button>
+        <button type="button" class="chip" data-category="wheat" data-prompt="What is the ideal schedule for the first and second watering of wheat crop?">
+          🌾 Wheat Irrigation Schedule
+        </button>
+
+        <!-- Cotton -->
+        <button type="button" class="chip" data-category="cotton" data-prompt="My cotton crop is attacked by whitefly and bollworm. What is the best safe pesticide spray?">
+          🌿 Cotton Whitefly & Bollworm
+        </button>
+        <button type="button" class="chip" data-category="cotton" data-prompt="How can I stop leaf curl virus and flower shedding on my cotton field?">
+          🌿 Cotton Leaf Curl Prevention
+        </button>
+
+        <!-- Rice -->
+        <button type="button" class="chip" data-category="rice" data-prompt="When should I drain water from the rice field before harvest?">
+          🍚 Rice Water Drainage Timing
+        </button>
+        <button type="button" class="chip" data-category="rice" data-prompt="What should I spray for stem borer and leaf blast disease in paddy rice?">
+          🍚 Rice Stem Borer Treatment
+        </button>
+
+        <!-- Vegetables -->
+        <button type="button" class="chip" data-category="vegetables" data-prompt="Tomato and chili plants have curled leaves and drooping branches. What is the cure?">
+          🍅 Tomato & Chili Leaf Curl
+        </button>
+        <button type="button" class="chip" data-category="vegetables" data-prompt="How to control aphids and green worms on vegetable gardens organically?">
+          🍅 Vegetable Pest & Aphid Spray
+        </button>
+
+        <!-- Fertilizers -->
+        <button type="button" class="chip" data-category="fertilizers" data-prompt="What is the correct Urea, DAP, and Potash dose per acre during the crop season?">
+          🧪 Urea & DAP Dose per Acre
+        </button>
+        <button type="button" class="chip" data-category="fertilizers" data-prompt="What are the symptoms of Zinc and Nitrogen deficiency in field crops?">
+          🧪 Zinc & Nutrient Deficiency
+        </button>
+
+        <!-- Livestock -->
+        <button type="button" class="chip" data-category="livestock" data-prompt="How can I increase milk production in cows and buffaloes with balanced green fodder and feed?">
+          🐄 Boost Cattle Milk Yield
+        </button>
+        <button type="button" class="chip" data-category="livestock" data-prompt="What are essential seasonal vaccinations and deworming steps for dairy cattle?">
+          🐄 Cattle Vaccination & Care
+        </button>
+      </div>
+    </section>
+
+    <!-- BOTTOM INPUT DOCK -->
+    <footer class="input-dock">
+      <!-- Image Preview Tray (hidden until photo selected) -->
+      <div id="image-preview-tray" class="image-preview-tray hidden">
+        <div class="preview-wrapper">
+          <img id="image-preview" src="" alt="Selected crop leaf or problem preview">
+          <button type="button" id="remove-image-btn" class="remove-img-btn" aria-label="Remove photo"
+            title="Remove photo">
+            ✖
+          </button>
+        </div>
+        <span class="image-preview-text">Crop photo attached ready for analysis</span>
+      </div>
+
+      <!-- Live Voice Listening Banner (shown when mic active) -->
+      <div id="listening-banner" class="listening-banner hidden" aria-live="assertive">
+        <div class="pulse-ring"></div>
+        <span class="listening-label">Listening to your voice... Speak your farming problem 🎙️</span>
+        <button type="button" id="stop-listening-btn" class="stop-listening-btn">Stop</button>
+      </div>
+
+      <!-- Input Form -->
+      <form id="chat-form" class="chat-form" autocomplete="off">
+        <!-- Hidden file input for camera/gallery -->
+        <input type="file" id="camera-input" accept="image/*" capture="environment" class="hidden"
+          aria-label="Upload crop photo">
+
+        <!-- Camera / Gallery Button -->
+        <button type="button" id="camera-btn" class="action-btn camera-btn"
+          aria-label="Take or upload crop photo" title="Upload crop photo">
+          <span class="btn-icon">📷</span>
+          <span class="btn-text">Photo</span>
+        </button>
+
+        <!-- Large Voice Mic Button -->
+        <button type="button" id="mic-btn" class="action-btn mic-btn" aria-label="Speak your question"
+          title="Speak your question">
+          <span class="btn-icon">🎙️</span>
+          <span class="btn-text">Speak</span>
+        </button>
+
+        <!-- Text Input Field -->
+        <div class="input-field-wrapper">
+          <input type="text" id="prompt-input" name="prompt" class="text-input"
+            placeholder="Type or speak your farming problem (e.g. Yellow leaves on wheat)..."
+            aria-label="Type your farming question">
+        </div>
+
+        <!-- Send Submit Button -->
+        <button type="submit" id="send-btn" class="action-btn send-btn" aria-label="Send question" title="Send question">
+          <span class="btn-icon">➤</span>
+        </button>
+      </form>
+    </footer>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
